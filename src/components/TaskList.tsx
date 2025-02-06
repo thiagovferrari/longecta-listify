@@ -1,5 +1,5 @@
 import React from "react";
-import { Task } from "@/types/task";
+import { Task, EventCategory } from "@/types/task";
 import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -23,14 +23,25 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate }) => {
     });
   };
 
+  const categories: EventCategory[] = ["Civat", "Bahia", "Cisp", "TecnoMKT"];
+
   return (
-    <div className="space-y-4">
-      {tasks.map((task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          onStatusChange={() => handleStatusChange(task)}
-        />
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {categories.map((category) => (
+        <div key={category} className="bg-white rounded-lg p-4 shadow-lg">
+          <h2 className="text-xl font-bold mb-4 text-sky-600">{category}</h2>
+          <div className="space-y-4">
+            {tasks
+              .filter((task) => task.category === category)
+              .map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  onStatusChange={() => handleStatusChange(task)}
+                />
+              ))}
+          </div>
+        </div>
       ))}
     </div>
   );

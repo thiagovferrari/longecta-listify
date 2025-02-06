@@ -3,17 +3,18 @@ import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Task, TaskStatus } from "@/types/task";
+import { Task, EventCategory } from "@/types/task";
 
 const Index = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [filter, setFilter] = useState<TaskStatus | "all">("all");
+  const [filter, setFilter] = useState<Task["status"] | "all">("all");
 
-  const addTask = (title: string) => {
+  const addTask = (title: string, category: EventCategory) => {
     const newTask: Task = {
       id: Date.now().toString(),
       title,
       status: "todo",
+      category,
     };
     setTasks([...tasks, newTask]);
   };
@@ -33,8 +34,8 @@ const Index = () => {
       <Navbar />
       
       <main className="flex-grow py-8">
-        <div className="container max-w-2xl mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+        <div className="container mx-auto px-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6 mb-6">
             <div className="text-center">
               <h1 className="text-3xl font-bold text-sky-600 mb-2">
                 Longecta Demands
@@ -65,15 +66,9 @@ const Index = () => {
                 </button>
               ))}
             </div>
-
-            <TaskList tasks={filteredTasks} onTaskUpdate={updateTask} />
-
-            {filteredTasks.length === 0 && (
-              <p className="text-center text-gray-500 py-8">
-                Nenhuma tarefa encontrada
-              </p>
-            )}
           </div>
+
+          <TaskList tasks={filteredTasks} onTaskUpdate={updateTask} />
         </div>
       </main>
 
