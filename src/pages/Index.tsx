@@ -27,11 +27,11 @@ const Index = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-blue-50 py-8">
       <div className="container max-w-2xl">
         <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-longecta-primary mb-2">
+            <h1 className="text-3xl font-bold text-sky-600 mb-2">
               Longecta Demands
             </h1>
             <p className="text-gray-600">
@@ -42,13 +42,13 @@ const Index = () => {
           <TaskInput onAddTask={addTask} />
 
           <div className="flex gap-2 justify-center">
-            {(["all", "todo", "progress", "done"] as const).map((status) => (
+            {(["all", "todo", "done"] as const).map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}
                 className={`px-4 py-2 rounded-full text-sm transition-colors ${
                   filter === status
-                    ? "bg-longecta-primary text-white"
+                    ? "bg-sky-500 text-white"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                 }`}
               >
@@ -56,8 +56,6 @@ const Index = () => {
                   ? "Todas"
                   : status === "todo"
                   ? "A fazer"
-                  : status === "progress"
-                  ? "Em andamento"
                   : "Concluídas"}
               </button>
             ))}

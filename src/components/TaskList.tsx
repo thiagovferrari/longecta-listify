@@ -12,16 +12,14 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate }) => {
   const { toast } = useToast();
 
   const handleStatusChange = (task: Task) => {
-    const newStatus = task.status === "done" ? "todo" : 
-                     task.status === "progress" ? "done" : "progress";
+    const newStatus: Task["status"] = task.status === "done" ? "todo" : "done";
     
     const updatedTask = { ...task, status: newStatus };
     onTaskUpdate(updatedTask);
     
     toast({
       title: "Status atualizado",
-      description: `Tarefa "${task.title}" movida para ${newStatus === "done" ? "concluídas" : 
-                                                        newStatus === "progress" ? "em andamento" : "a fazer"}`,
+      description: `Tarefa "${task.title}" ${newStatus === "done" ? "concluída" : "movida para a fazer"}`,
     });
   };
 
