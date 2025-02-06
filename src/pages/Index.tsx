@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { Task, TaskStatus } from "@/types/task";
 
 const Index = () => {
@@ -27,49 +29,55 @@ const Index = () => {
   );
 
   return (
-    <div className="min-h-screen bg-blue-50 py-8">
-      <div className="container max-w-2xl">
-        <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-sky-600 mb-2">
-              Longecta Demands
-            </h1>
-            <p className="text-gray-600">
-              Gerencie suas tarefas de forma simples e eficiente
-            </p>
+    <div className="min-h-screen flex flex-col bg-blue-50">
+      <Navbar />
+      
+      <main className="flex-grow py-8">
+        <div className="container max-w-2xl mx-auto px-4">
+          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-sky-600 mb-2">
+                Longecta Demands
+              </h1>
+              <p className="text-gray-600">
+                Gerencie suas tarefas de forma simples e eficiente
+              </p>
+            </div>
+
+            <TaskInput onAddTask={addTask} />
+
+            <div className="flex gap-2 justify-center">
+              {(["all", "todo", "done"] as const).map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setFilter(status)}
+                  className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                    filter === status
+                      ? "bg-sky-500 text-white"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  {status === "all"
+                    ? "Todas"
+                    : status === "todo"
+                    ? "A fazer"
+                    : "Concluídas"}
+                </button>
+              ))}
+            </div>
+
+            <TaskList tasks={filteredTasks} onTaskUpdate={updateTask} />
+
+            {filteredTasks.length === 0 && (
+              <p className="text-center text-gray-500 py-8">
+                Nenhuma tarefa encontrada
+              </p>
+            )}
           </div>
-
-          <TaskInput onAddTask={addTask} />
-
-          <div className="flex gap-2 justify-center">
-            {(["all", "todo", "done"] as const).map((status) => (
-              <button
-                key={status}
-                onClick={() => setFilter(status)}
-                className={`px-4 py-2 rounded-full text-sm transition-colors ${
-                  filter === status
-                    ? "bg-sky-500 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {status === "all"
-                  ? "Todas"
-                  : status === "todo"
-                  ? "A fazer"
-                  : "Concluídas"}
-              </button>
-            ))}
-          </div>
-
-          <TaskList tasks={filteredTasks} onTaskUpdate={updateTask} />
-
-          {filteredTasks.length === 0 && (
-            <p className="text-center text-gray-500 py-8">
-              Nenhuma tarefa encontrada
-            </p>
-          )}
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 };
