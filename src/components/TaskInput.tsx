@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +9,12 @@ import { EventCategory } from "@/types/task";
 
 interface TaskInputProps {
   onAddTask: (title: string, category: EventCategory) => void;
+  defaultCategory?: EventCategory;
 }
 
-const TaskInput: React.FC<TaskInputProps> = ({ onAddTask }) => {
+const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory }) => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<EventCategory>("Civat");
+  const [category, setCategory] = useState<EventCategory>(defaultCategory || "Civat");
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,17 +31,19 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask }) => {
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      <Select value={category} onValueChange={(value) => setCategory(value as EventCategory)}>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Selecione o evento" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="Civat">Civat</SelectItem>
-          <SelectItem value="Bahia">Bahia</SelectItem>
-          <SelectItem value="Cisp">Cisp</SelectItem>
-          <SelectItem value="TecnoMKT">TecnoMKT</SelectItem>
-        </SelectContent>
-      </Select>
+      {!defaultCategory && (
+        <Select value={category} onValueChange={(value) => setCategory(value as EventCategory)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Selecione o evento" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Civat">Civat</SelectItem>
+            <SelectItem value="Bahia">Bahia</SelectItem>
+            <SelectItem value="Cisp">Cisp</SelectItem>
+            <SelectItem value="TecnoMKT">TecnoMKT</SelectItem>
+          </SelectContent>
+        </Select>
+      )}
       <Input
         value={title}
         onChange={(e) => setTitle(e.target.value)}

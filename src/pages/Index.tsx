@@ -1,8 +1,8 @@
+
 import React, { useState } from "react";
 import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Task, EventCategory } from "@/types/task";
 
 const Index = () => {
@@ -23,6 +23,10 @@ const Index = () => {
     setTasks(tasks.map((task) => 
       task.id === updatedTask.id ? updatedTask : task
     ));
+  };
+
+  const deleteTask = (taskId: string) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
   const filteredTasks = tasks.filter((task) =>
@@ -68,11 +72,13 @@ const Index = () => {
             </div>
           </div>
 
-          <TaskList tasks={filteredTasks} onTaskUpdate={updateTask} />
+          <TaskList 
+            tasks={filteredTasks} 
+            onTaskUpdate={updateTask} 
+            onTaskDelete={deleteTask}
+          />
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 };

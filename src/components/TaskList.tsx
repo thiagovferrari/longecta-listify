@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Task, EventCategory } from "@/types/task";
 import TaskItem from "./TaskItem";
@@ -6,9 +7,11 @@ import { useToast } from "@/components/ui/use-toast";
 interface TaskListProps {
   tasks: Task[];
   onTaskUpdate: (updatedTask: Task) => void;
+  onTaskDelete: (taskId: string) => void;
+  category?: EventCategory;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate, onTaskDelete, category }) => {
   const { toast } = useToast();
 
   const handleStatusChange = (task: Task) => {
@@ -23,21 +26,43 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate }) => {
     });
   };
 
-  const categories: EventCategory[] = ["Civat", "Bahia", "Cisp", "TecnoMKT"];
+  const handleEdit = (task: Task, newTitle: string) => {
+    const updatedTask = { ...task, title: newTitle };
+    onTaskUpdate(updatedTask);
+    
+    toast({
+      title: "Tarefa atualizada",
+      description: "O título da tarefa foi atualizado com sucesso",
+    });
+  };
+
+  const handleDelete = (task: Task) => {
+    onTaskDelete(task.id);
+    
+    toast({
+      title: "Tarefa excluída",
+      description: `A tarefa "${task.title}" foi excluída com sucesso`,
+    });
+  };
+
+  const tasksToShow = category ? tasks.filter((task) => task.category === category) : tasks;
+  const categories = category ? [category] : ["Civat", "Bahia", "Cisp", "TecnoMKT"] as EventCategory[];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {categories.map((category) => (
-        <div key={category} className="bg-white rounded-lg p-4 shadow-lg">
-          <h2 className="text-xl font-bold mb-4 text-sky-600">{category}</h2>
+      {categories.map((cat) => (
+        <div key={cat} className="bg-white rounded-lg p-4 shadow-lg">
+          <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
           <div className="space-y-4">
-            {tasks
-              .filter((task) => task.category === category)
+            {tasksToShow
+              .filter((task) => task.category === cat)
               .map((task) => (
                 <TaskItem
                   key={task.id}
                   task={task}
                   onStatusChange={() => handleStatusChange(task)}
+                  onDelete={() => handleDelete(task)}
+                  onEdit={(newTitle) => handleEdit(task, newTitle)}
                 />
               ))}
           </div>

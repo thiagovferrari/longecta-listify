@@ -1,3 +1,4 @@
+
 export type TaskStatus = "todo" | "progress" | "done";
 
 export type EventCategory = "Civat" | "Bahia" | "Cisp" | "TecnoMKT";
@@ -7,4 +8,11 @@ export interface Task {
   title: string;
   status: TaskStatus;
   category: EventCategory;
+}
+
+export interface Event {
+  id: string;
+  name: EventCategory;
+  banner?: string;
+  description: string;
 }
