@@ -9,9 +9,16 @@ interface TaskListProps {
   onTaskUpdate: (updatedTask: Task) => void;
   onTaskDelete: (taskId: string) => void;
   category?: EventCategory;
+  events?: EventCategory[];
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate, onTaskDelete, category }) => {
+const TaskList: React.FC<TaskListProps> = ({ 
+  tasks, 
+  onTaskUpdate, 
+  onTaskDelete, 
+  category,
+  events = ["Civat", "Bahia", "Cisp", "TecnoMKT"]
+}) => {
   const { toast } = useToast();
 
   const handleStatusChange = (task: Task) => {
@@ -46,11 +53,11 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onTaskUpdate, onTaskDelete, 
   };
 
   const tasksToShow = category ? tasks.filter((task) => task.category === category) : tasks;
-  const categories = category ? [category] : ["Civat", "Bahia", "Cisp", "TecnoMKT"] as EventCategory[];
+  const categoriesToShow = category ? [category] : events;
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {categories.map((cat) => (
+      {categoriesToShow.map((cat) => (
         <div key={cat} className="bg-white rounded-lg p-4 shadow-lg">
           <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
           <div className="space-y-4">

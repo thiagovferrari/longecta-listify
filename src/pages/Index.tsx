@@ -48,7 +48,7 @@ const Index: React.FC<IndexProps> = ({
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50">
-      <Navbar events={events} onAddEvent={onAddEvent} />
+      <Navbar events={events} />
       
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
@@ -115,6 +115,7 @@ const Index: React.FC<IndexProps> = ({
             tasks={filteredTasks} 
             onTaskUpdate={onTaskUpdate} 
             onTaskDelete={onTaskDelete}
+            events={events}
           />
         </div>
       </main>
