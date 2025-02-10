@@ -8,12 +8,13 @@ import { Task, EventCategory } from "@/types/task";
 
 interface EventPageProps {
   tasks: Task[];
+  events: EventCategory[];
   onAddTask: (title: string, category: EventCategory) => void;
   onTaskUpdate: (updatedTask: Task) => void;
   onTaskDelete: (taskId: string) => void;
 }
 
-const EventPage: React.FC<EventPageProps> = ({ tasks, onAddTask, onTaskUpdate, onTaskDelete }) => {
+const EventPage: React.FC<EventPageProps> = ({ tasks, events, onAddTask, onTaskUpdate, onTaskDelete }) => {
   const { category } = useParams<{ category: string }>();
   const eventCategory = category as EventCategory;
 
@@ -27,13 +28,13 @@ const EventPage: React.FC<EventPageProps> = ({ tasks, onAddTask, onTaskUpdate, o
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50">
-      <Navbar />
+      <Navbar events={events} />
       
       <main className="flex-grow">
         {/* Banner do Evento */}
         <div 
           className="w-full h-[200px] bg-cover bg-center relative"
-          style={{ backgroundImage: `url(${eventBanners[eventCategory]})` }}
+          style={{ backgroundImage: `url(${eventBanners[eventCategory] || eventBanners.Civat})` }}
         >
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
             <h1 className="text-4xl font-bold text-white">

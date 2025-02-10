@@ -65,6 +65,7 @@ const App = () => {
               element={
                 <EventPage 
                   tasks={tasks}
+                  events={events}
                   onAddTask={addTask}
                   onTaskUpdate={updateTask}
                   onTaskDelete={deleteTask}
