@@ -8,13 +8,18 @@ import Index from "./pages/Index";
 import EventPage from "./pages/EventPage";
 import NotFound from "./pages/NotFound";
 import { useState } from "react";
-import { Task, EventCategory } from "./types/task";
+import { Task, EventCategory, Event } from "./types/task";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [events, setEvents] = useState<EventCategory[]>(["Civat", "Bahia", "Cisp", "TecnoMKT"]);
+  const [events, setEvents] = useState<Event[]>([
+    { id: "1", name: "Civat", banner: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81", description: "Civat Event" },
+    { id: "2", name: "Bahia", banner: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7", description: "Bahia Event" },
+    { id: "3", name: "Cisp", banner: "https://images.unsplash.com/photo-1519389950473-47ba0277781c", description: "Cisp Event" },
+    { id: "4", name: "TecnoMKT", banner: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81", description: "TecnoMKT Event" }
+  ]);
 
   const addTask = (title: string, category: EventCategory) => {
     const newTask: Task = {
@@ -37,9 +42,30 @@ const App = () => {
   };
 
   const addEvent = (eventName: string) => {
-    if (eventName.trim() && !events.includes(eventName.trim())) {
-      setEvents([...events, eventName.trim()]);
+    if (eventName.trim() && !events.find(e => e.name === eventName.trim())) {
+      const newEvent: Event = {
+        id: Date.now().toString(),
+        name: eventName.trim(),
+        description: `${eventName.trim()} Event`,
+        banner: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81" // Default banner
+      };
+      setEvents([...events, newEvent]);
     }
+  };
+
+  const updateEvent = (eventId: string, updates: Partial<Event>) => {
+    setEvents(events.map(event => 
+      event.id === eventId ? { ...event, ...updates } : event
+    ));
+  };
+
+  const deleteEvent = (eventId: string) => {
+    // Delete all tasks associated with this event first
+    const event = events.find(e => e.id === eventId);
+    if (event) {
+      setTasks(tasks.filter(task => task.category !== event.name));
+    }
+    setEvents(events.filter(event => event.id !== eventId));
   };
 
   return (
@@ -52,11 +78,14 @@ const App = () => {
               element={
                 <Index 
                   tasks={tasks}
-                  events={events}
+                  events={events.map(e => e.name)}
                   onAddTask={addTask}
                   onTaskUpdate={updateTask}
                   onTaskDelete={deleteTask}
                   onAddEvent={addEvent}
+                  onUpdateEvent={updateEvent}
+                  onDeleteEvent={deleteEvent}
+                  eventsList={events}
                 />
               } 
             />
@@ -65,10 +94,13 @@ const App = () => {
               element={
                 <EventPage 
                   tasks={tasks}
-                  events={events}
+                  events={events.map(e => e.name)}
+                  eventsList={events}
                   onAddTask={addTask}
                   onTaskUpdate={updateTask}
                   onTaskDelete={deleteTask}
+                  onUpdateEvent={updateEvent}
+                  onDeleteEvent={deleteEvent}
                 />
               } 
             />
@@ -83,3 +115,4 @@ const App = () => {
 };
 
 export default App;
+

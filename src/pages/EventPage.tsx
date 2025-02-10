@@ -1,29 +1,66 @@
 
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
 import Navbar from "@/components/Navbar";
-import { Task, EventCategory } from "@/types/task";
+import { Task, EventCategory, Event } from "@/types/task";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface EventPageProps {
   tasks: Task[];
   events: EventCategory[];
+  eventsList: Event[];
   onAddTask: (title: string, category: EventCategory) => void;
   onTaskUpdate: (updatedTask: Task) => void;
   onTaskDelete: (taskId: string) => void;
+  onUpdateEvent: (eventId: string, updates: Partial<Event>) => void;
+  onDeleteEvent: (eventId: string) => void;
 }
 
-const EventPage: React.FC<EventPageProps> = ({ tasks, events, onAddTask, onTaskUpdate, onTaskDelete }) => {
+const EventPage: React.FC<EventPageProps> = ({ 
+  tasks, 
+  events, 
+  eventsList,
+  onAddTask, 
+  onTaskUpdate, 
+  onTaskDelete,
+  onUpdateEvent,
+  onDeleteEvent
+}) => {
   const { category } = useParams<{ category: string }>();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const eventCategory = category as EventCategory;
+  
+  const currentEvent = eventsList.find(event => event.name === eventCategory);
+  const [bannerUrl, setBannerUrl] = useState(currentEvent?.banner || "");
 
-  // URLs dos banners para cada evento
-  const eventBanners: Record<string, string> = {
-    Civat: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81",
-    Bahia: "https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7",
-    Cisp: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    TecnoMKT: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81"
+  if (!currentEvent) {
+    return <div>Evento não encontrado</div>;
+  }
+
+  const handleUpdateBanner = () => {
+    if (bannerUrl.trim()) {
+      onUpdateEvent(currentEvent.id, { ...currentEvent, banner: bannerUrl });
+      toast({
+        title: "Banner atualizado",
+        description: "O banner do evento foi atualizado com sucesso!",
+      });
+    }
+  };
+
+  const handleDeleteEvent = () => {
+    onDeleteEvent(currentEvent.id);
+    toast({
+      title: "Evento excluído",
+      description: "O evento foi excluído com sucesso!",
+    });
+    navigate('/');
   };
 
   return (
@@ -31,15 +68,50 @@ const EventPage: React.FC<EventPageProps> = ({ tasks, events, onAddTask, onTaskU
       <Navbar events={events} />
       
       <main className="flex-grow">
-        {/* Banner do Evento */}
-        <div 
-          className="w-full h-[200px] bg-cover bg-center relative"
-          style={{ backgroundImage: `url(${eventBanners[eventCategory] || eventBanners.Civat})` }}
-        >
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <h1 className="text-4xl font-bold text-white">
-              {eventCategory}
-            </h1>
+        <div className="relative">
+          <div 
+            className="w-full h-[200px] bg-cover bg-center relative"
+            style={{ backgroundImage: `url(${currentEvent.banner})` }}
+          >
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <h1 className="text-4xl font-bold text-white">
+                {eventCategory}
+              </h1>
+            </div>
+          </div>
+
+          <div className="absolute top-4 right-4 space-x-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="secondary">
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Editar Banner
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Atualizar Banner do Evento</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Input
+                    value={bannerUrl}
+                    onChange={(e) => setBannerUrl(e.target.value)}
+                    placeholder="URL da nova imagem do banner..."
+                  />
+                  <Button onClick={handleUpdateBanner}>
+                    Atualizar Banner
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Button 
+              variant="destructive"
+              onClick={handleDeleteEvent}
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Excluir Evento
+            </Button>
           </div>
         </div>
 
@@ -54,7 +126,10 @@ const EventPage: React.FC<EventPageProps> = ({ tasks, events, onAddTask, onTaskU
               </p>
             </div>
 
-            <TaskInput onAddTask={(title) => onAddTask(title, eventCategory)} defaultCategory={eventCategory} />
+            <TaskInput 
+              onAddTask={(title) => onAddTask(title, eventCategory)} 
+              defaultCategory={eventCategory} 
+            />
           </div>
 
           <TaskList 
@@ -70,3 +145,4 @@ const EventPage: React.FC<EventPageProps> = ({ tasks, events, onAddTask, onTaskU
 };
 
 export default EventPage;
+

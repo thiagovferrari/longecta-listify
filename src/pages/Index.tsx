@@ -3,32 +3,39 @@ import React, { useState } from "react";
 import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
 import Navbar from "@/components/Navbar";
-import { Task, EventCategory } from "@/types/task";
+import { Task, EventCategory, Event } from "@/types/task";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 
 interface IndexProps {
   tasks: Task[];
   events: EventCategory[];
+  eventsList: Event[];
   onAddTask: (title: string, category: EventCategory) => void;
   onTaskUpdate: (updatedTask: Task) => void;
   onTaskDelete: (taskId: string) => void;
   onAddEvent: (eventName: string) => void;
+  onUpdateEvent: (eventId: string, updates: Partial<Event>) => void;
+  onDeleteEvent: (eventId: string) => void;
 }
 
 const Index: React.FC<IndexProps> = ({ 
   tasks, 
   events, 
+  eventsList,
   onAddTask, 
   onTaskUpdate, 
   onTaskDelete,
-  onAddEvent 
+  onAddEvent,
+  onUpdateEvent,
+  onDeleteEvent
 }) => {
   const [filter, setFilter] = useState<Task["status"] | "all">("all");
   const [newEvent, setNewEvent] = useState("");
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const { toast } = useToast();
 
   const handleAddEvent = () => {
@@ -40,6 +47,23 @@ const Index: React.FC<IndexProps> = ({
         description: `O evento ${newEvent} foi adicionado com sucesso!`,
       });
     }
+  };
+
+  const handleDeleteEvent = (eventId: string) => {
+    onDeleteEvent(eventId);
+    toast({
+      title: "Evento excluído",
+      description: "O evento foi excluído com sucesso!",
+    });
+  };
+
+  const handleUpdateEvent = (eventId: string, updates: Partial<Event>) => {
+    onUpdateEvent(eventId, updates);
+    setSelectedEvent(null);
+    toast({
+      title: "Evento atualizado",
+      description: "O evento foi atualizado com sucesso!",
+    });
   };
 
   const filteredTasks = tasks.filter((task) =>
@@ -75,6 +99,9 @@ const Index: React.FC<IndexProps> = ({
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Adicionar Novo Evento</DialogTitle>
+                    <DialogDescription>
+                      Digite o nome do novo evento que deseja adicionar.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="flex gap-2">
                     <Input
@@ -109,6 +136,66 @@ const Index: React.FC<IndexProps> = ({
                 </button>
               ))}
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {eventsList.map((event) => (
+                <div key={event.id} className="relative group">
+                  <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="secondary" size="icon" onClick={() => setSelectedEvent(event)}>
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Editar Evento</DialogTitle>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <Input
+                            defaultValue={event.name}
+                            onChange={(e) => {
+                              if (selectedEvent) {
+                                setSelectedEvent({
+                                  ...selectedEvent,
+                                  name: e.target.value
+                                });
+                              }
+                            }}
+                            placeholder="Nome do evento"
+                          />
+                          <Input
+                            defaultValue={event.banner}
+                            onChange={(e) => {
+                              if (selectedEvent) {
+                                setSelectedEvent({
+                                  ...selectedEvent,
+                                  banner: e.target.value
+                                });
+                              }
+                            }}
+                            placeholder="URL do banner"
+                          />
+                          <Button 
+                            onClick={() => selectedEvent && handleUpdateEvent(selectedEvent.id, selectedEvent)}
+                          >
+                            Salvar
+                          </Button>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+
+                    <Button 
+                      variant="destructive" 
+                      size="icon"
+                      onClick={() => handleDeleteEvent(event.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           <TaskList 
@@ -124,3 +211,4 @@ const Index: React.FC<IndexProps> = ({
 };
 
 export default Index;
+

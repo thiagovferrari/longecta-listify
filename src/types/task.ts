@@ -1,7 +1,6 @@
 
 export type TaskStatus = "todo" | "progress" | "done";
 
-// Alterando para string para permitir eventos dinâmicos
 export type EventCategory = string;
 
 export interface Task {
@@ -17,3 +16,4 @@ export interface Event {
   banner?: string;
   description: string;
 }
+
