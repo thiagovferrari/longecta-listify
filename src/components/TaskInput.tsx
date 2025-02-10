@@ -10,11 +10,12 @@ import { EventCategory } from "@/types/task";
 interface TaskInputProps {
   onAddTask: (title: string, category: EventCategory) => void;
   defaultCategory?: EventCategory;
+  events?: EventCategory[];
 }
 
-const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory }) => {
+const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, events = ["Civat", "Bahia", "Cisp", "TecnoMKT"] }) => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<EventCategory>(defaultCategory || "Civat");
+  const [category, setCategory] = useState<EventCategory>(defaultCategory || events[0]);
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -37,10 +38,11 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory }) => 
             <SelectValue placeholder="Selecione o evento" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Civat">Civat</SelectItem>
-            <SelectItem value="Bahia">Bahia</SelectItem>
-            <SelectItem value="Cisp">Cisp</SelectItem>
-            <SelectItem value="TecnoMKT">TecnoMKT</SelectItem>
+            {events.map((event) => (
+              <SelectItem key={event} value={event}>
+                {event}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       )}

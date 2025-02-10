@@ -14,6 +14,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [events, setEvents] = useState<EventCategory[]>(["Civat", "Bahia", "Cisp", "TecnoMKT"]);
 
   const addTask = (title: string, category: EventCategory) => {
     const newTask: Task = {
@@ -35,6 +36,12 @@ const App = () => {
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
 
+  const addEvent = (eventName: string) => {
+    if (eventName.trim() && !events.includes(eventName.trim())) {
+      setEvents([...events, eventName.trim()]);
+    }
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -45,9 +52,11 @@ const App = () => {
               element={
                 <Index 
                   tasks={tasks}
+                  events={events}
                   onAddTask={addTask}
                   onTaskUpdate={updateTask}
                   onTaskDelete={deleteTask}
+                  onAddEvent={addEvent}
                 />
               } 
             />

@@ -4,29 +4,42 @@ import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
 import Navbar from "@/components/Navbar";
 import { Task, EventCategory } from "@/types/task";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
+import { Plus } from "lucide-react";
 
-const Index = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+interface IndexProps {
+  tasks: Task[];
+  events: EventCategory[];
+  onAddTask: (title: string, category: EventCategory) => void;
+  onTaskUpdate: (updatedTask: Task) => void;
+  onTaskDelete: (taskId: string) => void;
+  onAddEvent: (eventName: string) => void;
+}
+
+const Index: React.FC<IndexProps> = ({ 
+  tasks, 
+  events, 
+  onAddTask, 
+  onTaskUpdate, 
+  onTaskDelete,
+  onAddEvent 
+}) => {
   const [filter, setFilter] = useState<Task["status"] | "all">("all");
+  const [newEvent, setNewEvent] = useState("");
+  const { toast } = useToast();
 
-  const addTask = (title: string, category: EventCategory) => {
-    const newTask: Task = {
-      id: Date.now().toString(),
-      title,
-      status: "todo",
-      category,
-    };
-    setTasks([...tasks, newTask]);
-  };
-
-  const updateTask = (updatedTask: Task) => {
-    setTasks(tasks.map((task) => 
-      task.id === updatedTask.id ? updatedTask : task
-    ));
-  };
-
-  const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+  const handleAddEvent = () => {
+    if (newEvent.trim() && !events.includes(newEvent.trim())) {
+      onAddEvent(newEvent.trim());
+      setNewEvent("");
+      toast({
+        title: "Evento adicionado",
+        description: `O evento ${newEvent} foi adicionado com sucesso!`,
+      });
+    }
   };
 
   const filteredTasks = tasks.filter((task) =>
@@ -35,7 +48,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-blue-50">
-      <Navbar />
+      <Navbar events={events} onAddEvent={onAddEvent} />
       
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
@@ -49,7 +62,33 @@ const Index = () => {
               </p>
             </div>
 
-            <TaskInput onAddTask={addTask} />
+            <div className="flex justify-between items-center gap-4">
+              <TaskInput onAddTask={onAddTask} events={events} />
+              
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    Novo Evento
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Adicionar Novo Evento</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex gap-2">
+                    <Input
+                      value={newEvent}
+                      onChange={(e) => setNewEvent(e.target.value)}
+                      placeholder="Nome do novo evento..."
+                    />
+                    <Button onClick={handleAddEvent}>
+                      Adicionar
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
 
             <div className="flex gap-2 justify-center">
               {(["all", "todo", "done"] as const).map((status) => (
@@ -74,8 +113,8 @@ const Index = () => {
 
           <TaskList 
             tasks={filteredTasks} 
-            onTaskUpdate={updateTask} 
-            onTaskDelete={deleteTask}
+            onTaskUpdate={onTaskUpdate} 
+            onTaskDelete={onTaskDelete}
           />
         </div>
       </main>
