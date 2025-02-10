@@ -1,7 +1,8 @@
 
 export type TaskStatus = "todo" | "progress" | "done";
 
-export type EventCategory = "Civat" | "Bahia" | "Cisp" | "TecnoMKT";
+// Alterando para string para permitir eventos dinâmicos
+export type EventCategory = string;
 
 export interface Task {
   id: string;
