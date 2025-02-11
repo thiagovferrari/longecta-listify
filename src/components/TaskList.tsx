@@ -56,30 +56,49 @@ const TaskList: React.FC<TaskListProps> = ({
   const tasksToShow = category ? tasks.filter((task) => task.category === category) : tasks;
   const categoriesToShow = category ? [category] : events;
 
+  const handleWheel = (e: React.WheelEvent) => {
+    const container = e.currentTarget;
+    container.scrollLeft += e.deltaY;
+    e.preventDefault();
+  };
+
   return (
-    <ScrollArea className="w-full whitespace-nowrap rounded-xl">
-      <div className="flex space-x-6">
-        {categoriesToShow.map((cat) => (
-          <div key={cat} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
-            <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
-            <div className="space-y-4">
-              {tasksToShow
-                .filter((task) => task.category === cat)
-                .map((task) => (
-                  <TaskItem
-                    key={task.id}
-                    task={task}
-                    onStatusChange={() => handleStatusChange(task)}
-                    onDelete={() => handleDelete(task)}
-                    onEdit={(newTitle) => handleEdit(task, newTitle)}
-                  />
-                ))}
+    <div className="flex flex-col h-full">
+      <div 
+        className="overflow-x-auto pb-6" 
+        onWheel={handleWheel}
+        style={{ scrollBehavior: 'smooth' }}
+      >
+        <div className="flex space-x-6 min-w-full">
+          {categoriesToShow.map((cat) => (
+            <div key={cat} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
+              <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
+              <div className="space-y-4">
+                {tasksToShow
+                  .filter((task) => task.category === cat)
+                  .map((task) => (
+                    <TaskItem
+                      key={task.id}
+                      task={task}
+                      onStatusChange={() => handleStatusChange(task)}
+                      onDelete={() => handleDelete(task)}
+                      onEdit={(newTitle) => handleEdit(task, newTitle)}
+                    />
+                  ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+      <ScrollArea className="w-full mt-2">
+        <div className="flex space-x-6">
+          {categoriesToShow.map((cat) => (
+            <div key={cat} className="min-w-[300px]" />
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" className="h-3" />
+      </ScrollArea>
+    </div>
   );
 };
 
