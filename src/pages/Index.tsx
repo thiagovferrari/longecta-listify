@@ -36,12 +36,15 @@ const Index: React.FC<IndexProps> = ({
   const [filter, setFilter] = useState<Task["status"] | "all">("all");
   const [newEvent, setNewEvent] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [addEventOpen, setAddEventOpen] = useState(false);
+  const [editEventOpen, setEditEventOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddEvent = () => {
     if (newEvent.trim() && !events.includes(newEvent.trim())) {
       onAddEvent(newEvent.trim());
       setNewEvent("");
+      setAddEventOpen(false);
       toast({
         title: "Evento adicionado",
         description: `O evento ${newEvent} foi adicionado com sucesso!`,
@@ -60,6 +63,7 @@ const Index: React.FC<IndexProps> = ({
   const handleUpdateEvent = (eventId: string, updates: Partial<Event>) => {
     onUpdateEvent(eventId, updates);
     setSelectedEvent(null);
+    setEditEventOpen(false);
     toast({
       title: "Evento atualizado",
       description: "O evento foi atualizado com sucesso!",
@@ -89,7 +93,7 @@ const Index: React.FC<IndexProps> = ({
             <div className="flex justify-between items-center gap-4">
               <TaskInput onAddTask={onAddTask} events={events} />
               
-              <Dialog>
+              <Dialog open={addEventOpen} onOpenChange={setAddEventOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="flex items-center gap-2">
                     <Plus className="h-4 w-4" />
@@ -141,7 +145,7 @@ const Index: React.FC<IndexProps> = ({
               {eventsList.map((event) => (
                 <div key={event.id} className="relative group">
                   <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Dialog>
+                    <Dialog open={editEventOpen} onOpenChange={setEditEventOpen}>
                       <DialogTrigger asChild>
                         <Button variant="secondary" size="icon" onClick={() => setSelectedEvent(event)}>
                           <Pencil className="h-4 w-4" />
@@ -211,4 +215,3 @@ const Index: React.FC<IndexProps> = ({
 };
 
 export default Index;
-

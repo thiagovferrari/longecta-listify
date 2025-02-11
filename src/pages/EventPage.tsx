@@ -39,6 +39,7 @@ const EventPage: React.FC<EventPageProps> = ({
   
   const currentEvent = eventsList.find(event => event.name === eventCategory);
   const [bannerUrl, setBannerUrl] = useState(currentEvent?.banner || "");
+  const [editBannerOpen, setEditBannerOpen] = useState(false);
 
   if (!currentEvent) {
     return <div>Evento não encontrado</div>;
@@ -47,6 +48,7 @@ const EventPage: React.FC<EventPageProps> = ({
   const handleUpdateBanner = () => {
     if (bannerUrl.trim()) {
       onUpdateEvent(currentEvent.id, { ...currentEvent, banner: bannerUrl });
+      setEditBannerOpen(false);
       toast({
         title: "Banner atualizado",
         description: "O banner do evento foi atualizado com sucesso!",
@@ -81,7 +83,7 @@ const EventPage: React.FC<EventPageProps> = ({
           </div>
 
           <div className="absolute top-4 right-4 space-x-2">
-            <Dialog>
+            <Dialog open={editBannerOpen} onOpenChange={setEditBannerOpen}>
               <DialogTrigger asChild>
                 <Button variant="secondary">
                   <Pencil className="h-4 w-4 mr-2" />
@@ -145,4 +147,3 @@ const EventPage: React.FC<EventPageProps> = ({
 };
 
 export default EventPage;
-
