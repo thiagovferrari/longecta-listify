@@ -65,9 +65,13 @@ const TaskList: React.FC<TaskListProps> = ({
   return (
     <div className="flex flex-col h-full">
       <div 
-        className="overflow-x-auto pb-6" 
+        className="overflow-x-auto pb-6 scrollbar-hide" 
         onWheel={handleWheel}
-        style={{ scrollBehavior: 'smooth' }}
+        style={{ 
+          scrollBehavior: 'smooth',
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',
+        }}
       >
         <div className="flex space-x-6 min-w-full">
           {categoriesToShow.map((cat) => (
@@ -90,14 +94,6 @@ const TaskList: React.FC<TaskListProps> = ({
           ))}
         </div>
       </div>
-      <ScrollArea className="w-full mt-2">
-        <div className="flex space-x-6">
-          {categoriesToShow.map((cat) => (
-            <div key={cat} className="min-w-[300px]" />
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" className="h-3" />
-      </ScrollArea>
     </div>
   );
 };
