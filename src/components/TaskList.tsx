@@ -3,6 +3,7 @@ import React from "react";
 import { Task, EventCategory } from "@/types/task";
 import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface TaskListProps {
   tasks: Task[];
@@ -56,26 +57,29 @@ const TaskList: React.FC<TaskListProps> = ({
   const categoriesToShow = category ? [category] : events;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {categoriesToShow.map((cat) => (
-        <div key={cat} className="bg-white rounded-lg p-4 shadow-lg">
-          <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
-          <div className="space-y-4">
-            {tasksToShow
-              .filter((task) => task.category === cat)
-              .map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  onStatusChange={() => handleStatusChange(task)}
-                  onDelete={() => handleDelete(task)}
-                  onEdit={(newTitle) => handleEdit(task, newTitle)}
-                />
-              ))}
+    <ScrollArea className="w-full whitespace-nowrap rounded-xl">
+      <div className="flex space-x-6">
+        {categoriesToShow.map((cat) => (
+          <div key={cat} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
+            <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
+            <div className="space-y-4">
+              {tasksToShow
+                .filter((task) => task.category === cat)
+                .map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    onStatusChange={() => handleStatusChange(task)}
+                    onDelete={() => handleDelete(task)}
+                    onEdit={(newTitle) => handleEdit(task, newTitle)}
+                  />
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   );
 };
 
