@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface IndexProps {
   tasks: Task[];
@@ -37,7 +37,6 @@ const Index: React.FC<IndexProps> = ({
   const [newEvent, setNewEvent] = useState("");
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [addEventOpen, setAddEventOpen] = useState(false);
-  const [editEventOpen, setEditEventOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddEvent = () => {
@@ -50,24 +49,6 @@ const Index: React.FC<IndexProps> = ({
         description: `O evento ${newEvent} foi adicionado com sucesso!`,
       });
     }
-  };
-
-  const handleDeleteEvent = (eventId: string) => {
-    onDeleteEvent(eventId);
-    toast({
-      title: "Evento excluído",
-      description: "O evento foi excluído com sucesso!",
-    });
-  };
-
-  const handleUpdateEvent = (eventId: string, updates: Partial<Event>) => {
-    onUpdateEvent(eventId, updates);
-    setSelectedEvent(null);
-    setEditEventOpen(false);
-    toast({
-      title: "Evento atualizado",
-      description: "O evento foi atualizado com sucesso!",
-    });
   };
 
   const filteredTasks = tasks.filter((task) =>
@@ -91,7 +72,7 @@ const Index: React.FC<IndexProps> = ({
             </div>
 
             <div className="flex justify-between items-center gap-4">
-              <TaskInput onAddTask={onAddTask} events={events} />
+              <TaskInput onAddTask={onAddTask} events={eventsList.map(e => e.name)} />
               
               <Dialog open={addEventOpen} onOpenChange={setAddEventOpen}>
                 <DialogTrigger asChild>
