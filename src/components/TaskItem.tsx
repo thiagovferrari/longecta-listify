@@ -33,13 +33,13 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onStatusChange, onDelete, onE
   };
 
   const getStatusColor = () => {
-    return task.status === "done" ? "bg-sky-100" : "bg-blue-50";
+    return task.status === "done" ? "bg-sky-100" : "bg-white";
   };
 
   return (
     <div
       className={cn(
-        "animate-task-appear p-4 rounded-lg shadow-sm flex items-center gap-4 transition-all duration-200 hover:shadow-md",
+        "animate-task-appear p-4 rounded-lg shadow-lg flex items-center gap-4 transition-all duration-200 hover:shadow-xl transform hover:-translate-y-0.5",
         getStatusColor()
       )}
     >
@@ -51,7 +51,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onStatusChange, onDelete, onE
         <Input
           value={editedTitle}
           onChange={(e) => setEditedTitle(e.target.value)}
-          className="flex-1"
+          className="flex-1 shadow-inner"
           autoFocus
         />
       ) : (
@@ -70,7 +70,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onStatusChange, onDelete, onE
           variant="ghost"
           size="icon"
           onClick={handleEdit}
-          className="hover:bg-sky-100"
+          className="hover:bg-sky-100 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
         >
           <Pencil className="h-4 w-4 text-sky-600" />
         </Button>
@@ -78,7 +78,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onStatusChange, onDelete, onE
           variant="ghost"
           size="icon"
           onClick={onDelete}
-          className="hover:bg-red-100"
+          className="hover:bg-red-100 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
         >
           <Trash2 className="h-4 w-4 text-red-500" />
         </Button>

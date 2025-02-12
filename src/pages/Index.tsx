@@ -75,14 +75,14 @@ const Index: React.FC<IndexProps> = ({
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-blue-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-white">
       <Navbar events={events} />
       
       <main className="flex-grow py-8">
         <div className="container mx-auto px-4">
-          <div className="bg-white rounded-xl shadow-lg p-6 space-y-6 mb-6">
+          <div className="bg-white rounded-3xl shadow-xl p-8 space-y-6 mb-6 transform hover:shadow-2xl transition-all duration-300">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-sky-600 mb-2">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent mb-2">
                 Longecta Demands
               </h1>
               <p className="text-gray-600">
@@ -95,12 +95,15 @@ const Index: React.FC<IndexProps> = ({
               
               <Dialog open={addEventOpen} onOpenChange={setAddEventOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="flex items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white hover:from-sky-600 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                  >
                     <Plus className="h-4 w-4" />
                     Novo Evento
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="bg-white rounded-2xl shadow-2xl">
                   <DialogHeader>
                     <DialogTitle>Adicionar Novo Evento</DialogTitle>
                     <DialogDescription>
@@ -112,8 +115,12 @@ const Index: React.FC<IndexProps> = ({
                       value={newEvent}
                       onChange={(e) => setNewEvent(e.target.value)}
                       placeholder="Nome do novo evento..."
+                      className="shadow-inner"
                     />
-                    <Button onClick={handleAddEvent}>
+                    <Button 
+                      onClick={handleAddEvent}
+                      className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                    >
                       Adicionar
                     </Button>
                   </div>
@@ -126,10 +133,10 @@ const Index: React.FC<IndexProps> = ({
                 <button
                   key={status}
                   onClick={() => setFilter(status)}
-                  className={`px-4 py-2 rounded-full text-sm transition-colors ${
+                  className={`px-6 py-2 rounded-full text-sm transition-all duration-200 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl ${
                     filter === status
-                      ? "bg-sky-500 text-white"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      ? "bg-gradient-to-r from-sky-500 to-blue-600 text-white"
+                      : "bg-white text-gray-600 hover:bg-gray-50"
                   }`}
                 >
                   {status === "all"
@@ -138,66 +145,6 @@ const Index: React.FC<IndexProps> = ({
                     ? "A fazer"
                     : "Concluídas"}
                 </button>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {eventsList.map((event) => (
-                <div key={event.id} className="relative group">
-                  <div className="absolute top-2 right-2 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Dialog open={editEventOpen} onOpenChange={setEditEventOpen}>
-                      <DialogTrigger asChild>
-                        <Button variant="secondary" size="icon" onClick={() => setSelectedEvent(event)}>
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Editar Evento</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <Input
-                            defaultValue={event.name}
-                            onChange={(e) => {
-                              if (selectedEvent) {
-                                setSelectedEvent({
-                                  ...selectedEvent,
-                                  name: e.target.value
-                                });
-                              }
-                            }}
-                            placeholder="Nome do evento"
-                          />
-                          <Input
-                            defaultValue={event.banner}
-                            onChange={(e) => {
-                              if (selectedEvent) {
-                                setSelectedEvent({
-                                  ...selectedEvent,
-                                  banner: e.target.value
-                                });
-                              }
-                            }}
-                            placeholder="URL do banner"
-                          />
-                          <Button 
-                            onClick={() => selectedEvent && handleUpdateEvent(selectedEvent.id, selectedEvent)}
-                          >
-                            Salvar
-                          </Button>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-
-                    <Button 
-                      variant="destructive" 
-                      size="icon"
-                      onClick={() => handleDeleteEvent(event.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
               ))}
             </div>
           </div>

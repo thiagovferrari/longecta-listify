@@ -1,12 +1,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { Task, Event } from '@/types/task';
-
-// Acessando as credenciais do Supabase diretamente
-const supabaseUrl = 'https://vaihyumaqzvqoyotxtfz.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhaWh5dW1hcXp2cW95b3R4dGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkyOTc4NTMsImV4cCI6MjA1NDg3Mzg1M30.zPfv_eYoYLCfJD8UzSpJEPNCV2lbCCAknfb1vcpdTc0';
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
+import { supabase } from '@/integrations/supabase/client';
 
 // Tasks
 export async function fetchTasks() {
@@ -16,7 +11,11 @@ export async function fetchTasks() {
     .order('created_at', { ascending: false });
     
   if (error) throw error;
-  return data as Task[];
+  
+  return data.map(task => ({
+    ...task,
+    category: task.event_id
+  })) as Task[];
 }
 
 export async function addTask(title: string, category: string) {
@@ -25,7 +24,7 @@ export async function addTask(title: string, category: string) {
     .insert([
       { 
         title, 
-        category,
+        event_id: category,
         status: 'todo'
       }
     ])
@@ -33,19 +32,28 @@ export async function addTask(title: string, category: string) {
     .single();
     
   if (error) throw error;
-  return data as Task;
+  return {
+    ...data,
+    category: data.event_id
+  } as Task;
 }
 
 export async function updateTask(task: Task) {
   const { data, error } = await supabase
     .from('demands')
-    .update(task)
+    .update({
+      ...task,
+      event_id: task.category
+    })
     .eq('id', task.id)
     .select()
     .single();
     
   if (error) throw error;
-  return data as Task;
+  return {
+    ...data,
+    category: data.event_id
+  } as Task;
 }
 
 export async function deleteTask(id: string) {
@@ -65,7 +73,11 @@ export async function fetchEvents() {
     .order('created_at', { ascending: false });
     
   if (error) throw error;
-  return data as Event[];
+  
+  return data.map(event => ({
+    ...event,
+    name: event.title
+  })) as Event[];
 }
 
 export async function addEvent(name: string) {
@@ -75,13 +87,17 @@ export async function addEvent(name: string) {
       { 
         title: name,
         description: `${name} Event`,
+        date: new Date().toISOString()
       }
     ])
     .select()
     .single();
     
   if (error) throw error;
-  return data as Event;
+  return {
+    ...data,
+    name: data.title
+  } as Event;
 }
 
 export async function updateEvent(id: string, updates: Partial<Event>) {
@@ -90,13 +106,18 @@ export async function updateEvent(id: string, updates: Partial<Event>) {
     .update({
       title: updates.name,
       description: updates.description,
+      banner: updates.banner,
+      date: updates.date
     })
     .eq('id', id)
     .select()
     .single();
     
   if (error) throw error;
-  return data as Event;
+  return {
+    ...data,
+    name: data.title
+  } as Event;
 }
 
 export async function deleteEvent(id: string) {
@@ -106,4 +127,22 @@ export async function deleteEvent(id: string) {
     .eq('id', id);
     
   if (error) throw error;
+}
+
+// Upload de imagem
+export async function uploadEventBanner(file: File) {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${crypto.randomUUID()}.${fileExt}`;
+  
+  const { error: uploadError } = await supabase.storage
+    .from('event_banners')
+    .upload(fileName, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage
+    .from('event_banners')
+    .getPublicUrl(fileName);
+
+  return data.publicUrl;
 }

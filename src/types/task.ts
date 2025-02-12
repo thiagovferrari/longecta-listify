@@ -8,11 +8,15 @@ export interface Task {
   title: string;
   status: TaskStatus;
   category: EventCategory;
+  created_at?: string;
+  description?: string;
 }
 
 export interface Event {
   id: string;
-  name: EventCategory;
+  name: string;
   banner?: string;
   description: string;
+  date: string;
+  created_at?: string;
 }
