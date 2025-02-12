@@ -21,13 +21,12 @@ export async function fetchTasks() {
 export async function addTask(title: string, category: string) {
   const { data, error } = await supabase
     .from('demands')
-    .insert([
-      { 
-        title, 
-        event_id: category,
-        status: 'todo'
-      }
-    ])
+    .insert({
+      title, 
+      event_id: category,
+      status: 'todo',
+      user_id: '00000000-0000-0000-0000-000000000000'
+    })
     .select()
     .single();
     
@@ -42,8 +41,10 @@ export async function updateTask(task: Task) {
   const { data, error } = await supabase
     .from('demands')
     .update({
-      ...task,
-      event_id: task.category
+      title: task.title,
+      status: task.status,
+      event_id: task.category,
+      user_id: '00000000-0000-0000-0000-000000000000'
     })
     .eq('id', task.id)
     .select()
@@ -83,13 +84,12 @@ export async function fetchEvents() {
 export async function addEvent(name: string) {
   const { data, error } = await supabase
     .from('events')
-    .insert([
-      { 
-        title: name,
-        description: `${name} Event`,
-        date: new Date().toISOString()
-      }
-    ])
+    .insert({
+      title: name,
+      description: `${name} Event`,
+      date: new Date().toISOString(),
+      user_id: '00000000-0000-0000-0000-000000000000'
+    })
     .select()
     .single();
     
@@ -107,7 +107,8 @@ export async function updateEvent(id: string, updates: Partial<Event>) {
       title: updates.name,
       description: updates.description,
       banner: updates.banner,
-      date: updates.date
+      date: updates.date,
+      user_id: '00000000-0000-0000-0000-000000000000'
     })
     .eq('id', id)
     .select()
