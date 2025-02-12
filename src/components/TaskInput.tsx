@@ -15,7 +15,7 @@ interface TaskInputProps {
 
 const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, events = [] }) => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<EventCategory>(defaultCategory || (events[0] || ""));
+  const [category, setCategory] = useState<EventCategory>(defaultCategory || (events[0]?.id || ""));
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,10 +23,18 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, event
     if (title.trim() && category) {
       onAddTask(title.trim(), category);
       setTitle("");
+      const eventName = events.find(e => e.id === category)?.name || category;
       toast({
         title: "Tarefa adicionada",
-        description: `Nova tarefa criada para o evento ${category}!`,
+        description: `Nova tarefa criada para o evento ${eventName}!`,
       });
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
     }
   };
 
@@ -35,15 +43,15 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, event
       {!defaultCategory && (
         <Select 
           value={category} 
-          onValueChange={(value) => setCategory(value as EventCategory)}
+          onValueChange={(value) => setCategory(value)}
         >
           <SelectTrigger className="w-[180px] bg-white shadow-inner">
             <SelectValue placeholder="Selecione o evento" />
           </SelectTrigger>
           <SelectContent className="z-50">
             {events.map((event) => (
-              <SelectItem key={event} value={event}>
-                {event}
+              <SelectItem key={event.id} value={event.id}>
+                {event.name}
               </SelectItem>
             ))}
           </SelectContent>
@@ -52,6 +60,7 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, event
       <Input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
+        onKeyDown={handleKeyPress}
         placeholder="Adicionar nova tarefa..."
         className="flex-1 bg-white shadow-inner"
       />

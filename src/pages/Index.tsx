@@ -51,6 +51,13 @@ const Index: React.FC<IndexProps> = ({
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleAddEvent();
+    }
+  };
+
   const filteredTasks = tasks.filter((task) =>
     filter === "all" ? true : task.status === filter
   );
@@ -72,7 +79,7 @@ const Index: React.FC<IndexProps> = ({
             </div>
 
             <div className="flex justify-between items-center gap-4">
-              <TaskInput onAddTask={onAddTask} events={eventsList.map(e => e.name)} />
+              <TaskInput onAddTask={onAddTask} events={eventsList} />
               
               <Dialog open={addEventOpen} onOpenChange={setAddEventOpen}>
                 <DialogTrigger asChild>
@@ -95,6 +102,7 @@ const Index: React.FC<IndexProps> = ({
                     <Input
                       value={newEvent}
                       onChange={(e) => setNewEvent(e.target.value)}
+                      onKeyDown={handleKeyPress}
                       placeholder="Nome do novo evento..."
                       className="shadow-inner"
                     />
