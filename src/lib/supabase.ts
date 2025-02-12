@@ -3,15 +3,15 @@ import { createClient } from '@supabase/supabase-js';
 import { Task, Event } from '@/types/task';
 
 // Acessando as credenciais do Supabase diretamente
-const supabaseUrl = 'https://nyghhyamrnqirrfuwmdg.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55Z2hoeWFtcm5xaXJyZnV3bWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA0MzM2NzgsImV4cCI6MjAyNjAwOTY3OH0.TQgK7-4lAOeKE81LgGMN4b5tOeYGqCtS7CbpuOl5sC4';
+const supabaseUrl = 'https://vaihyumaqzvqoyotxtfz.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZhaWh5dW1hcXp2cW95b3R4dGZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzkyOTc4NTMsImV4cCI6MjA1NDg3Mzg1M30.zPfv_eYoYLCfJD8UzSpJEPNCV2lbCCAknfb1vcpdTc0';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Tasks
 export async function fetchTasks() {
   const { data, error } = await supabase
-    .from('tasks')
+    .from('demands')
     .select('*')
     .order('created_at', { ascending: false });
     
@@ -21,7 +21,7 @@ export async function fetchTasks() {
 
 export async function addTask(title: string, category: string) {
   const { data, error } = await supabase
-    .from('tasks')
+    .from('demands')
     .insert([
       { 
         title, 
@@ -38,7 +38,7 @@ export async function addTask(title: string, category: string) {
 
 export async function updateTask(task: Task) {
   const { data, error } = await supabase
-    .from('tasks')
+    .from('demands')
     .update(task)
     .eq('id', task.id)
     .select()
@@ -50,7 +50,7 @@ export async function updateTask(task: Task) {
 
 export async function deleteTask(id: string) {
   const { error } = await supabase
-    .from('tasks')
+    .from('demands')
     .delete()
     .eq('id', id);
     
@@ -73,9 +73,8 @@ export async function addEvent(name: string) {
     .from('events')
     .insert([
       { 
-        name,
+        title: name,
         description: `${name} Event`,
-        banner: "https://images.unsplash.com/photo-1605810230434-7631ac76ec81"
       }
     ])
     .select()
@@ -88,7 +87,10 @@ export async function addEvent(name: string) {
 export async function updateEvent(id: string, updates: Partial<Event>) {
   const { data, error } = await supabase
     .from('events')
-    .update(updates)
+    .update({
+      title: updates.name,
+      description: updates.description,
+    })
     .eq('id', id)
     .select()
     .single();

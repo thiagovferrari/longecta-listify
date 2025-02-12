@@ -16,4 +16,3 @@ export interface Event {
   banner?: string;
   description: string;
 }
-
