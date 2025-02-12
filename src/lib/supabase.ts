@@ -2,8 +2,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { Task, Event } from '@/types/task';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Acessando as credenciais do Supabase diretamente
+const supabaseUrl = 'https://nyghhyamrnqirrfuwmdg.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55Z2hoeWFtcm5xaXJyZnV3bWRnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA0MzM2NzgsImV4cCI6MjAyNjAwOTY3OH0.TQgK7-4lAOeKE81LgGMN4b5tOeYGqCtS7CbpuOl5sC4';
 
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
