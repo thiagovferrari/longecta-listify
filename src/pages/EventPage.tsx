@@ -139,8 +139,9 @@ const EventPage: React.FC<EventPageProps> = ({
             </div>
 
             <TaskInput 
-              onAddTask={(title) => onAddTask(title, eventCategory)} 
-              defaultCategory={eventCategory} 
+              onAddTask={(title) => onAddTask(title, currentEvent.id)} 
+              defaultCategory={currentEvent.id}
+              events={eventsList}
             />
           </div>
 
@@ -148,7 +149,8 @@ const EventPage: React.FC<EventPageProps> = ({
             tasks={tasks} 
             onTaskUpdate={onTaskUpdate} 
             onTaskDelete={onTaskDelete}
-            category={eventCategory}
+            category={currentEvent.id}
+            events={eventsList}
           />
         </div>
       </main>
