@@ -4,6 +4,8 @@ import { Task, Event } from "@/types/task";
 import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { Check, Clock } from "lucide-react";
 
 interface TaskListProps {
   tasks: Task[];
@@ -61,27 +63,44 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
-  // Na página inicial, mostrar todas as colunas
   const displayEvents = category 
     ? events.filter(event => event.id === category)
     : events;
 
-  // Filtrar tarefas baseado na categoria (se estiver em uma página específica de evento)
   const getTasksForEvent = (eventId: string) => {
     return tasks.filter(task => task.category === eventId);
+  };
+
+  const getEventStatus = (eventId: string) => {
+    const eventTasks = getTasksForEvent(eventId);
+    if (eventTasks.length === 0) return "todo";
+    const allDone = eventTasks.every(task => task.status === "done");
+    return allDone ? "done" : "todo";
   };
 
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="w-full overflow-x-auto">
-        <div className="flex gap-6 pb-6 min-w-full">
+        <div className="flex gap-6 pb-6 min-w-max p-4">
           {displayEvents.map((event) => {
             const eventTasks = getTasksForEvent(event.id);
-            console.log(`Tasks for event ${event.name}:`, eventTasks);
+            const eventStatus = getEventStatus(event.id);
             
             return (
               <div key={event.id} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
-                <h2 className="text-xl font-bold mb-4 text-sky-600">{event.name}</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-sky-600">{event.name}</h2>
+                  <Badge 
+                    variant={eventStatus === "done" ? "default" : "destructive"}
+                    className="flex items-center gap-1"
+                  >
+                    {eventStatus === "done" ? (
+                      <><Check className="w-3 h-3" /> Concluído</>
+                    ) : (
+                      <><Clock className="w-3 h-3" /> A fazer</>
+                    )}
+                  </Badge>
+                </div>
                 <div className="space-y-4">
                   {eventTasks.map((task) => (
                     <TaskItem
