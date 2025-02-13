@@ -14,7 +14,8 @@ export async function fetchTasks() {
   
   return data.map(task => ({
     ...task,
-    category: task.event_id
+    category: task.event_id,
+    status: task.status === 'pendente' ? 'todo' : task.status
   })) as Task[];
 }
 
@@ -33,7 +34,8 @@ export async function addTask(title: string, category: string) {
   if (error) throw error;
   return {
     ...data,
-    category: data.event_id
+    category: data.event_id,
+    status: data.status === 'pendente' ? 'todo' : data.status
   } as Task;
 }
 
@@ -53,7 +55,8 @@ export async function updateTask(task: Task) {
   if (error) throw error;
   return {
     ...data,
-    category: data.event_id
+    category: data.event_id,
+    status: data.status === 'pendente' ? 'todo' : data.status
   } as Task;
 }
 

@@ -53,17 +53,21 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
-  const tasksToShow = category ? tasks.filter((task) => task.category === category) : tasks;
+  // Se estiver na página de evento específico, mostrar apenas as tarefas daquele evento
+  const filteredTasks = category 
+    ? tasks.filter((task) => task.category === category)
+    : tasks;
 
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="w-full overflow-x-auto">
         <div className="flex gap-6 pb-6 min-w-full">
-          {events.map((event) => (
+          {/* Sempre mostrar todos os eventos na página inicial */}
+          {(!category ? events : events.filter(e => e.id === category)).map((event) => (
             <div key={event.id} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
               <h2 className="text-xl font-bold mb-4 text-sky-600">{event.name}</h2>
               <div className="space-y-4">
-                {tasksToShow
+                {filteredTasks
                   .filter((task) => task.category === event.id)
                   .map((task) => (
                     <TaskItem
