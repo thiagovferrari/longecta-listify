@@ -40,23 +40,21 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, event
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      {!defaultCategory && events.length > 0 && (
-        <Select 
-          value={category} 
-          onValueChange={setCategory}
-        >
-          <SelectTrigger className="w-[180px] bg-white shadow-inner">
-            <SelectValue placeholder="Selecione o evento" />
-          </SelectTrigger>
-          <SelectContent className="z-50">
-            {events.map((event) => (
-              <SelectItem key={event.id} value={event.id}>
-                {event.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      )}
+      <Select 
+        value={category} 
+        onValueChange={setCategory}
+      >
+        <SelectTrigger className="w-[180px] bg-white shadow-inner">
+          <SelectValue placeholder="Selecione o evento" />
+        </SelectTrigger>
+        <SelectContent className="z-50">
+          {events.map((event) => (
+            <SelectItem key={event.id} value={event.id}>
+              {event.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <Input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
