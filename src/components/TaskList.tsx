@@ -1,16 +1,16 @@
 
 import React from "react";
-import { Task, EventCategory } from "@/types/task";
+import { Task, Event } from "@/types/task";
 import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TaskListProps {
   tasks: Task[];
   onTaskUpdate: (updatedTask: Task) => void;
   onTaskDelete: (taskId: string) => void;
-  category?: EventCategory;
-  events?: EventCategory[];
+  category?: string;
+  events: Event[];
 }
 
 const TaskList: React.FC<TaskListProps> = ({ 
@@ -18,7 +18,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onTaskUpdate, 
   onTaskDelete, 
   category,
-  events = ["Civat", "Bahia", "Cisp", "TecnoMKT"]
+  events = []
 }) => {
   const { toast } = useToast();
 
@@ -54,32 +54,17 @@ const TaskList: React.FC<TaskListProps> = ({
   };
 
   const tasksToShow = category ? tasks.filter((task) => task.category === category) : tasks;
-  const categoriesToShow = category ? [category] : events;
-
-  const handleWheel = (e: React.WheelEvent) => {
-    const container = e.currentTarget;
-    container.scrollLeft += e.deltaY;
-    e.preventDefault();
-  };
 
   return (
     <div className="flex flex-col h-full">
-      <div 
-        className="overflow-x-auto pb-6 scrollbar-hide" 
-        onWheel={handleWheel}
-        style={{ 
-          scrollBehavior: 'smooth',
-          msOverflowStyle: 'none',
-          scrollbarWidth: 'none',
-        }}
-      >
-        <div className="flex space-x-6 min-w-full">
-          {categoriesToShow.map((cat) => (
-            <div key={cat} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
-              <h2 className="text-xl font-bold mb-4 text-sky-600">{cat}</h2>
+      <ScrollArea className="w-full overflow-x-auto">
+        <div className="flex gap-6 pb-6 min-w-full">
+          {events.map((event) => (
+            <div key={event.id} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
+              <h2 className="text-xl font-bold mb-4 text-sky-600">{event.name}</h2>
               <div className="space-y-4">
                 {tasksToShow
-                  .filter((task) => task.category === cat)
+                  .filter((task) => task.category === event.id)
                   .map((task) => (
                     <TaskItem
                       key={task.id}
@@ -93,7 +78,7 @@ const TaskList: React.FC<TaskListProps> = ({
             </div>
           ))}
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };

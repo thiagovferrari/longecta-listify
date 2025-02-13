@@ -5,17 +5,17 @@ import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { EventCategory } from "@/types/task";
+import { Event } from "@/types/task";
 
 interface TaskInputProps {
-  onAddTask: (title: string, category: EventCategory) => void;
-  defaultCategory?: EventCategory;
-  events?: EventCategory[];
+  onAddTask: (title: string, category: string) => void;
+  defaultCategory?: string;
+  events: Event[];
 }
 
 const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, events = [] }) => {
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState<EventCategory>(defaultCategory || (events[0]?.id || ""));
+  const [category, setCategory] = useState<string>(defaultCategory || "");
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,10 +40,10 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, event
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-2">
-      {!defaultCategory && (
+      {!defaultCategory && events.length > 0 && (
         <Select 
           value={category} 
-          onValueChange={(value) => setCategory(value)}
+          onValueChange={setCategory}
         >
           <SelectTrigger className="w-[180px] bg-white shadow-inner">
             <SelectValue placeholder="Selecione o evento" />
@@ -66,6 +66,7 @@ const TaskInput: React.FC<TaskInputProps> = ({ onAddTask, defaultCategory, event
       />
       <Button 
         type="submit" 
+        disabled={!category || !title.trim()}
         className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
       >
         <Plus className="h-4 w-4" />

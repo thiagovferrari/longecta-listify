@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import TaskList from "@/components/TaskList";
 import TaskInput from "@/components/TaskInput";
@@ -35,12 +34,11 @@ const Index: React.FC<IndexProps> = ({
 }) => {
   const [filter, setFilter] = useState<Task["status"] | "all">("all");
   const [newEvent, setNewEvent] = useState("");
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [addEventOpen, setAddEventOpen] = useState(false);
   const { toast } = useToast();
 
   const handleAddEvent = () => {
-    if (newEvent.trim() && !events.includes(newEvent.trim())) {
+    if (newEvent.trim()) {
       onAddEvent(newEvent.trim());
       setNewEvent("");
       setAddEventOpen(false);
@@ -142,7 +140,7 @@ const Index: React.FC<IndexProps> = ({
             tasks={filteredTasks} 
             onTaskUpdate={onTaskUpdate} 
             onTaskDelete={onTaskDelete}
-            events={events}
+            events={eventsList}
           />
         </div>
       </main>
