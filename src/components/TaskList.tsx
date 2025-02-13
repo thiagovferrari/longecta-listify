@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Task, Event } from "@/types/task";
 import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
@@ -21,6 +21,14 @@ const TaskList: React.FC<TaskListProps> = ({
   events = []
 }) => {
   const { toast } = useToast();
+
+  useEffect(() => {
+    console.log('TaskList rendered with:', {
+      tasks,
+      events,
+      category
+    });
+  }, [tasks, events, category]);
 
   const handleStatusChange = (task: Task) => {
     const newStatus: Task["status"] = task.status === "done" ? "todo" : "done";
@@ -53,23 +61,29 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
-  // Se estiver na página de evento específico, mostrar apenas as tarefas daquele evento
-  const filteredTasks = category 
-    ? tasks.filter((task) => task.category === category)
-    : tasks;
+  // Na página inicial, mostrar todas as colunas
+  const displayEvents = category 
+    ? events.filter(event => event.id === category)
+    : events;
+
+  // Filtrar tarefas baseado na categoria (se estiver em uma página específica de evento)
+  const getTasksForEvent = (eventId: string) => {
+    return tasks.filter(task => task.category === eventId);
+  };
 
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="w-full overflow-x-auto">
         <div className="flex gap-6 pb-6 min-w-full">
-          {/* Sempre mostrar todos os eventos na página inicial */}
-          {(!category ? events : events.filter(e => e.id === category)).map((event) => (
-            <div key={event.id} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
-              <h2 className="text-xl font-bold mb-4 text-sky-600">{event.name}</h2>
-              <div className="space-y-4">
-                {filteredTasks
-                  .filter((task) => task.category === event.id)
-                  .map((task) => (
+          {displayEvents.map((event) => {
+            const eventTasks = getTasksForEvent(event.id);
+            console.log(`Tasks for event ${event.name}:`, eventTasks);
+            
+            return (
+              <div key={event.id} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
+                <h2 className="text-xl font-bold mb-4 text-sky-600">{event.name}</h2>
+                <div className="space-y-4">
+                  {eventTasks.map((task) => (
                     <TaskItem
                       key={task.id}
                       task={task}
@@ -78,9 +92,10 @@ const TaskList: React.FC<TaskListProps> = ({
                       onEdit={(newTitle) => handleEdit(task, newTitle)}
                     />
                   ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </ScrollArea>
     </div>
