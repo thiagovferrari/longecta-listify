@@ -28,7 +28,9 @@ const TaskList: React.FC<TaskListProps> = ({
     console.log('TaskList rendered with:', {
       tasks,
       events,
-      category
+      category,
+      tasksLength: tasks.length,
+      eventsLength: events.length
     });
   }, [tasks, events, category]);
 
@@ -63,6 +65,7 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
+  // Se estamos em uma página de evento específico, filtramos apenas aquele evento
   const displayEvents = category 
     ? events.filter(event => event.id === category)
     : events;
@@ -78,16 +81,27 @@ const TaskList: React.FC<TaskListProps> = ({
     return allDone ? "done" : "todo";
   };
 
+  if (!events.length) {
+    return (
+      <div className="flex items-center justify-center h-48 text-gray-500">
+        Nenhum evento encontrado. Crie um novo evento para começar.
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="w-full overflow-x-auto">
+      <ScrollArea className="w-full">
         <div className="flex gap-6 pb-6 min-w-max p-4">
           {displayEvents.map((event) => {
             const eventTasks = getTasksForEvent(event.id);
             const eventStatus = getEventStatus(event.id);
             
             return (
-              <div key={event.id} className="bg-white rounded-lg p-4 shadow-lg min-w-[300px]">
+              <div 
+                key={event.id} 
+                className="bg-white rounded-lg p-4 shadow-lg min-w-[300px] flex-shrink-0"
+              >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-sky-600">{event.name}</h2>
                   <Badge 
@@ -111,6 +125,11 @@ const TaskList: React.FC<TaskListProps> = ({
                       onEdit={(newTitle) => handleEdit(task, newTitle)}
                     />
                   ))}
+                  {eventTasks.length === 0 && (
+                    <div className="text-center py-4 text-gray-500">
+                      Nenhuma tarefa neste evento
+                    </div>
+                  )}
                 </div>
               </div>
             );
