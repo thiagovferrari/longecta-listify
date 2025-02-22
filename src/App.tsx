@@ -12,7 +12,7 @@ import { fetchTasks, fetchEvents, addTask, updateTask, deleteTask, addEvent, upd
 
 const queryClient = new QueryClient();
 
-const AppContent = () => {
+const AppRoutes = () => {
   const queryClient = useQueryClient();
 
   // Queries
@@ -72,55 +72,56 @@ const AppContent = () => {
   });
 
   return (
-    <BrowserRouter>
-      <TooltipProvider>
-        <Routes>
-          <Route 
-            path="/" 
-            element={
-              <Index 
-                tasks={tasks}
-                events={events.map(e => e.name)}
-                onAddTask={(title, category) => addTaskMutation.mutate({ title, category })}
-                onTaskUpdate={(task) => updateTaskMutation.mutate(task)}
-                onTaskDelete={(taskId) => deleteTaskMutation.mutate(taskId)}
-                onAddEvent={(name) => addEventMutation.mutate(name)}
-                onUpdateEvent={(id, updates) => updateEventMutation.mutate({ id, updates })}
-                onDeleteEvent={(id) => deleteEventMutation.mutate(id)}
-                eventsList={events}
-              />
-            } 
-          />
-          <Route 
-            path="/event/:category" 
-            element={
-              <EventPage 
-                tasks={tasks}
-                events={events.map(e => e.name)}
-                eventsList={events}
-                onAddTask={(title, category) => addTaskMutation.mutate({ title, category })}
-                onTaskUpdate={(task) => updateTaskMutation.mutate(task)}
-                onTaskDelete={(taskId) => deleteTaskMutation.mutate(taskId)}
-                onUpdateEvent={(id, updates) => updateEventMutation.mutate({ id, updates })}
-                onDeleteEvent={(id) => deleteEventMutation.mutate(id)}
-              />
-            } 
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
-        <Sonner />
-      </TooltipProvider>
-    </BrowserRouter>
+    <TooltipProvider>
+      <Routes>
+        <Route 
+          path="/" 
+          element={
+            <Index 
+              tasks={tasks}
+              events={events.map(e => e.name)}
+              onAddTask={(title, category) => addTaskMutation.mutate({ title, category })}
+              onTaskUpdate={(task) => updateTaskMutation.mutate(task)}
+              onTaskDelete={(taskId) => deleteTaskMutation.mutate(taskId)}
+              onAddEvent={(name) => addEventMutation.mutate(name)}
+              onUpdateEvent={(id, updates) => updateEventMutation.mutate({ id, updates })}
+              onDeleteEvent={(id) => deleteEventMutation.mutate(id)}
+              eventsList={events}
+            />
+          } 
+        />
+        <Route 
+          path="/event/:category" 
+          element={
+            <EventPage 
+              tasks={tasks}
+              events={events.map(e => e.name)}
+              eventsList={events}
+              onAddTask={(title, category) => addTaskMutation.mutate({ title, category })}
+              onTaskUpdate={(task) => updateTaskMutation.mutate(task)}
+              onTaskDelete={(taskId) => deleteTaskMutation.mutate(taskId)}
+              onUpdateEvent={(id, updates) => updateEventMutation.mutate({ id, updates })}
+              onDeleteEvent={(id) => deleteEventMutation.mutate(id)}
+            />
+          } 
+        />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      <Toaster />
+      <Sonner />
+    </TooltipProvider>
   );
 };
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AppContent />
-    </QueryClientProvider>
+    <BrowserRouter>
+      <QueryClientProvider client={queryClient}>
+        <AppRoutes />
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 };
 
 export default App;
+
