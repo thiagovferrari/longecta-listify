@@ -68,10 +68,10 @@ const Index: React.FC<IndexProps> = ({
         <div className="container mx-auto px-4">
           <div className="bg-white rounded-3xl shadow-xl p-8 space-y-6 mb-6 transform hover:shadow-2xl transition-all duration-300">
             <div className="text-center">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 bg-clip-text text-transparent mb-2">
                 Longecta Demands
               </h1>
-              <p className="text-gray-600">
+              <p className="text-sm text-gray-600">
                 Gerencie suas tarefas de forma simples e eficiente
               </p>
             </div>

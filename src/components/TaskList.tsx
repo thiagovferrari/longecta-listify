@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Task, Event } from "@/types/task";
 import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
@@ -23,16 +23,27 @@ const TaskList: React.FC<TaskListProps> = ({
   events = []
 }) => {
   const { toast } = useToast();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log('TaskList rendered with:', {
-      tasks,
-      events,
-      category,
-      tasksLength: tasks.length,
-      eventsLength: events.length
-    });
-  }, [tasks, events, category]);
+    const handleWheel = (e: WheelEvent) => {
+      if (scrollContainerRef.current) {
+        e.preventDefault();
+        scrollContainerRef.current.scrollLeft += e.deltaY;
+      }
+    };
+
+    const scrollContainer = scrollContainerRef.current;
+    if (scrollContainer) {
+      scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
+    return () => {
+      if (scrollContainer) {
+        scrollContainer.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []);
 
   const handleStatusChange = (task: Task) => {
     const newStatus: Task["status"] = task.status === "done" ? "todo" : "done";
@@ -90,8 +101,12 @@ const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="w-full overflow-hidden">
-        <div className="flex gap-6 pb-6 min-w-max p-4">
+      <div 
+        ref={scrollContainerRef}
+        className="overflow-x-auto pb-6 hide-scrollbar"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
+        <div className="flex gap-6 p-4 min-w-max">
           {displayEvents.map((event) => {
             const eventTasks = getTasksForEvent(event.id);
             const eventStatus = getEventStatus(event.id);
@@ -102,7 +117,7 @@ const TaskList: React.FC<TaskListProps> = ({
                 className="bg-white rounded-lg p-4 shadow-lg min-w-[300px] flex-shrink-0"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-base font-medium text-sky-600">{event.name}</h2>
+                  <h2 className="text-sm font-medium text-sky-600">{event.name}</h2>
                   <Badge 
                     variant={eventStatus === "done" ? "default" : "destructive"}
                     className="flex items-center gap-1"
@@ -134,7 +149,7 @@ const TaskList: React.FC<TaskListProps> = ({
             );
           })}
         </div>
-      </ScrollArea>
+      </div>
     </div>
   );
 };

@@ -22,11 +22,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onStatusChange, onDelete, onE
   const [editedDueDate, setEditedDueDate] = useState(task.dueDate || "");
 
   const handleEdit = () => {
-    onEdit({
+    const updates = {
       title: editedTitle,
       description: editedDescription,
       dueDate: editedDueDate
-    });
+    };
+    onEdit(updates);
     setIsDialogOpen(false);
   };
 
@@ -51,7 +52,12 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onStatusChange, onDelete, onE
   };
 
   const formatDate = (date: string) => {
-    return format(new Date(date), "dd/MM/yyyy");
+    try {
+      return format(new Date(date), "dd/MM/yyyy");
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return date;
+    }
   };
 
   return (
