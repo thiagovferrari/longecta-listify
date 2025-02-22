@@ -46,13 +46,13 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
-  const handleEdit = (task: Task, newTitle: string) => {
-    const updatedTask = { ...task, title: newTitle };
+  const handleEdit = (task: Task, updates: Partial<Task>) => {
+    const updatedTask = { ...task, ...updates };
     onTaskUpdate(updatedTask);
     
     toast({
       title: "Tarefa atualizada",
-      description: "O título da tarefa foi atualizado com sucesso",
+      description: "A tarefa foi atualizada com sucesso",
     });
   };
 
@@ -65,7 +65,6 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
-  // Se estamos em uma página de evento específico, filtramos apenas aquele evento
   const displayEvents = category 
     ? events.filter(event => event.id === category)
     : events;
@@ -91,7 +90,7 @@ const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="w-full">
+      <ScrollArea className="w-full overflow-hidden">
         <div className="flex gap-6 pb-6 min-w-max p-4">
           {displayEvents.map((event) => {
             const eventTasks = getTasksForEvent(event.id);
@@ -103,7 +102,7 @@ const TaskList: React.FC<TaskListProps> = ({
                 className="bg-white rounded-lg p-4 shadow-lg min-w-[300px] flex-shrink-0"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-sky-600">{event.name}</h2>
+                  <h2 className="text-base font-medium text-sky-600">{event.name}</h2>
                   <Badge 
                     variant={eventStatus === "done" ? "default" : "destructive"}
                     className="flex items-center gap-1"
@@ -122,7 +121,7 @@ const TaskList: React.FC<TaskListProps> = ({
                       task={task}
                       onStatusChange={() => handleStatusChange(task)}
                       onDelete={() => handleDelete(task)}
-                      onEdit={(newTitle) => handleEdit(task, newTitle)}
+                      onEdit={(updates) => handleEdit(task, updates)}
                     />
                   ))}
                   {eventTasks.length === 0 && (

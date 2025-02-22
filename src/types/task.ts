@@ -19,4 +19,5 @@ export interface Task {
   category: EventCategory;
   created_at?: string;
   description?: string;
+  dueDate?: string;
 }
