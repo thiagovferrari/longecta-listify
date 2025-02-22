@@ -5,7 +5,10 @@ import TaskItem from "./TaskItem";
 import { useToast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Check, Clock } from "lucide-react";
+import { Check, Clock, LogOut } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface TaskListProps {
   tasks: Task[];
@@ -24,6 +27,7 @@ const TaskList: React.FC<TaskListProps> = ({
 }) => {
   const { toast } = useToast();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -76,9 +80,22 @@ const TaskList: React.FC<TaskListProps> = ({
     });
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+    toast({
+      title: "Logout realizado",
+      description: "Você foi desconectado com sucesso",
+    });
+  };
+
   const displayEvents = category 
     ? events.filter(event => event.id === category)
-    : events;
+    : events.filter(event => {
+        // Filter events that have associated tasks
+        const hasTasks = tasks.some(task => task.category === event.id);
+        return hasTasks;
+      });
 
   const getTasksForEvent = (eventId: string) => {
     return tasks.filter(task => task.category === eventId);
@@ -101,6 +118,16 @@ const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <div className="flex flex-col h-full">
+      <div className="flex justify-end mb-4 px-4">
+        <Button
+          variant="outline"
+          onClick={handleLogout}
+          className="flex items-center gap-2"
+        >
+          <LogOut className="w-4 h-4" />
+          Sair
+        </Button>
+      </div>
       <div 
         ref={scrollContainerRef}
         className="overflow-x-auto pb-6 hide-scrollbar"
