@@ -27,7 +27,7 @@ const TaskList: React.FC<TaskListProps> = ({
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (scrollContainerRef.current) {
+      if (scrollContainerRef.current && !e.shiftKey) {
         e.preventDefault();
         scrollContainerRef.current.scrollLeft += e.deltaY;
       }
@@ -104,7 +104,12 @@ const TaskList: React.FC<TaskListProps> = ({
       <div 
         ref={scrollContainerRef}
         className="overflow-x-auto pb-6 hide-scrollbar"
-        style={{ WebkitOverflowScrolling: 'touch' }}
+        style={{ 
+          WebkitOverflowScrolling: 'touch',
+          background: 'linear-gradient(109.6deg, rgba(223,234,247,0.9) 11.2%, rgba(244,248,252,0.9) 91.1%)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '12px',
+        }}
       >
         <div className="flex gap-6 p-4 min-w-max">
           {displayEvents.map((event) => {
@@ -114,13 +119,16 @@ const TaskList: React.FC<TaskListProps> = ({
             return (
               <div 
                 key={event.id} 
-                className="bg-white rounded-lg p-4 shadow-lg min-w-[300px] flex-shrink-0"
+                className="bg-white/70 backdrop-blur-lg rounded-lg p-4 shadow-lg min-w-[300px] flex-shrink-0 border border-white/20"
+                style={{
+                  background: 'linear-gradient(to right, rgba(255,255,255,0.7), rgba(255,255,255,0.5))',
+                }}
               >
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-sm font-medium text-sky-600">{event.name}</h2>
                   <Badge 
                     variant={eventStatus === "done" ? "default" : "destructive"}
-                    className="flex items-center gap-1"
+                    className="flex items-center gap-1 bg-sky-500/80 backdrop-blur-sm"
                   >
                     {eventStatus === "done" ? (
                       <><Check className="w-3 h-3" /> Concluído</>
@@ -155,4 +163,3 @@ const TaskList: React.FC<TaskListProps> = ({
 };
 
 export default TaskList;
-

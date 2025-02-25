@@ -1,4 +1,3 @@
-
 import { createClient } from '@supabase/supabase-js';
 import { Task, Event } from '@/types/task';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,20 +21,24 @@ export async function fetchTasks() {
     id: task.id,
     category: task.event_id,
     status: task.status === 'pendente' ? 'todo' : task.status,
-    title: task.title
+    title: task.title,
+    description: task.description || '',
+    dueDate: task.due_date || new Date().toISOString().split('T')[0]
   }));
   console.log('Mapped tasks:', mappedTasks);
   return mappedTasks as Task[];
 }
 
-export async function addTask(title: string, category: string) {
-  console.log('Adding task:', { title, category });
+export async function addTask(title: string, category: string, description: string = '', dueDate: string = '') {
+  console.log('Adding task:', { title, category, description, dueDate });
   const { data, error } = await supabase
     .from('demands')
     .insert({
       title, 
       event_id: category,
       status: 'pendente',
+      description,
+      due_date: dueDate || new Date().toISOString().split('T')[0],
       user_id: '00000000-0000-0000-0000-000000000000'
     })
     .select()
@@ -52,7 +55,9 @@ export async function addTask(title: string, category: string) {
     id: data.id,
     category: data.event_id,
     status: 'todo',
-    title: data.title
+    title: data.title,
+    description: data.description || '',
+    dueDate: data.due_date || new Date().toISOString().split('T')[0]
   } as Task;
 }
 
@@ -64,6 +69,8 @@ export async function updateTask(task: Task) {
       title: task.title,
       status: task.status === 'todo' ? 'pendente' : task.status,
       event_id: task.category,
+      description: task.description,
+      due_date: task.dueDate,
       user_id: '00000000-0000-0000-0000-000000000000'
     })
     .eq('id', task.id)
@@ -81,7 +88,9 @@ export async function updateTask(task: Task) {
     id: data.id,
     category: data.event_id,
     status: data.status === 'pendente' ? 'todo' : data.status,
-    title: data.title
+    title: data.title,
+    description: data.description || '',
+    dueDate: data.due_date || new Date().toISOString().split('T')[0]
   } as Task;
 }
 

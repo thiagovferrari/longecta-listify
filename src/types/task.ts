@@ -18,6 +18,6 @@ export interface Task {
   status: TaskStatus;
   category: EventCategory;
   created_at?: string;
-  description?: string;
-  dueDate?: string;
+  description: string;
+  dueDate: string;
 }
