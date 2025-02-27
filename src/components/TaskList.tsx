@@ -27,14 +27,20 @@ const TaskList: React.FC<TaskListProps> = ({
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
-      if (scrollContainerRef.current && !e.shiftKey) {
+      if (scrollContainerRef.current) {
+        // Verifica se a tecla shift está pressionada para rolar verticalmente
+        if (e.shiftKey) return;
+        
         e.preventDefault();
+        
+        // Muda a direção: usa deltaY para mover horizontalmente
         scrollContainerRef.current.scrollLeft += e.deltaY;
       }
     };
 
     const scrollContainer = scrollContainerRef.current;
     if (scrollContainer) {
+      // Use { passive: false } para permitir chamar preventDefault()
       scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
     }
 
