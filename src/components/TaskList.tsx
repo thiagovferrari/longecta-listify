@@ -26,28 +26,30 @@ const TaskList: React.FC<TaskListProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    if (!scrollContainer) return;
+
     const handleWheel = (e: WheelEvent) => {
-      if (scrollContainerRef.current) {
-        // Verifica se a tecla shift está pressionada para rolar verticalmente
-        if (e.shiftKey) return;
-        
-        e.preventDefault();
-        
-        // Muda a direção: usa deltaY para mover horizontalmente
-        scrollContainerRef.current.scrollLeft += e.deltaY;
-      }
+      // Se a tecla Shift está pressionada, deixa o comportamento padrão (scroll vertical)
+      if (e.shiftKey) return;
+
+      // Impede o comportamento padrão do scroll
+      e.preventDefault();
+
+      // Scroll horizontal usando o deltaY (mais suave e intuitivo)
+      // Multiplica por um fator para tornar o scroll mais suave
+      const scrollAmount = e.deltaY * 0.8;
+      scrollContainer.scrollBy({
+        left: scrollAmount,
+        behavior: 'smooth'
+      });
     };
 
-    const scrollContainer = scrollContainerRef.current;
-    if (scrollContainer) {
-      // Use { passive: false } para permitir chamar preventDefault()
-      scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
-    }
+    // Usa { passive: false } para permitir preventDefault
+    scrollContainer.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
-      if (scrollContainer) {
-        scrollContainer.removeEventListener('wheel', handleWheel);
-      }
+      scrollContainer.removeEventListener('wheel', handleWheel);
     };
   }, []);
 
@@ -115,6 +117,7 @@ const TaskList: React.FC<TaskListProps> = ({
           background: 'linear-gradient(109.6deg, rgba(223,234,247,0.9) 11.2%, rgba(244,248,252,0.9) 91.1%)',
           backdropFilter: 'blur(10px)',
           borderRadius: '12px',
+          scrollbarWidth: 'none', // Firefox
         }}
       >
         <div className="flex gap-6 p-4 min-w-max">
